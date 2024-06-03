@@ -4,6 +4,7 @@ public class Board {
     private Frame movingFrame;
     private Frame staticFrame;
     private Piece piece;
+    boolean gameOver = false;
 
     int rows = 0, cols = 0;
 
@@ -26,13 +27,23 @@ public class Board {
     }
 
     private boolean showPiece(int row, int col){
-        movingFrame = new EmptyFrame(rows, cols).addFrame(piece, row, col);
-        if (movingFrame == null) return false;
+        Frame move = new EmptyFrame(rows, cols).addFrame(piece, row, col);
+        if (move == null) return false;
+        if(isCollision(move)) {
+            setStaticFrame(true);
+            return false;
+        }
+        movingFrame = move;
         return true;
     }
 
-    private void setStaticFrame(){
-        if(movingFrame.m.isValueInRow(movingFrame.m.getRowCount()-1, 1)) {
+    private boolean isCollision(Frame move){
+        Frame x = staticFrame.addFrame(move, 0, 0);
+        return x.m.containsValue(2);
+    }
+
+    private void setStaticFrame(boolean force){
+        if(movingFrame.m.isValueInRow(movingFrame.m.getRowCount()-1, 1) || force) {
             // reached the bottom
             staticFrame = staticFrame.addFrame(movingFrame, 0, 0);
             movingFrame = new EmptyFrame(rows, cols);
@@ -41,13 +52,16 @@ public class Board {
     }
 
     public boolean movePieceDown() {
-        setStaticFrame();
+        setStaticFrame(false);
         if(piece == null) return false;
         if(showPiece(piece.row + 1, piece.col)){
             piece.row ++;
-            setStaticFrame();
+            setStaticFrame(false);
             return true;
         }
+        setStaticFrame(true);
+        if(staticFrame.m.isValueInRow(0, 1)) gameOver = true;
+
         return false;
     }
 
@@ -81,13 +95,24 @@ public class Board {
                     move.m.isValueInColumn(0, 1)) ||
                     (move.m.isValueInRow(move.m.getRowCount()-1, 1) &&
                     move.m.isValueInRow(0, 1)))) {
-                this.piece = n;
-                movingFrame = move;
+                if(!isCollision(move)) {
+                    this.piece = n;
+                    movingFrame = move;
+                }
             }
         }
         return movePieceDown();
     }
 
+    public boolean removeFullLine(){
+        for(int i = 0; i < staticFrame.m.getRowCount(); i++){
+            if (!staticFrame.m.isValueInRow(i, 0)) {
+                staticFrame.removeRow(i);
+                staticFrame.InsertRow(0);
+            }
+        }
+        return true;
+    }
 
     public void print(){
         if (movingFrame == null) return;

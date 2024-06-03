@@ -6,15 +6,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
         int col = sc.nextInt();
         int row = sc.nextInt();
-        String test = sc.nextLine();
+        String input = sc.nextLine();
 
         Board board = new Board(row, col);
-        board.print();
-        System.out.println();
-        board.addNewPiece(input);
 
         boolean exit = false;
         do{
@@ -22,6 +18,10 @@ public class Main {
             System.out.println();
             input = sc.nextLine();
             switch (input) {
+                case "piece":
+                    String p = sc.nextLine();
+                    board.addNewPiece(p);
+                    break;
                 case "down":
                     board.movePieceDown();
                     break;
@@ -34,13 +34,20 @@ public class Main {
                 case "rotate":
                     board.rotatePiece();
                     break;
+                case "break":
+                    board.removeFullLine();
+                    break;
                 case "exit":
                     exit = true;
                     break;
             }
 
-        }while(!exit);
-
+        }while(!exit && !board.gameOver);
+        if(board.gameOver){
+            board.print();
+            System.out.println();
+            System.out.println("Game Over!");
+        }
         sc.close();
     }
 }

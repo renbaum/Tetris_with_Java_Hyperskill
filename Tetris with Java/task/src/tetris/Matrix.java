@@ -190,6 +190,17 @@ public class Matrix {
         }
         return false;
     }
+
+    public boolean containsValue(int value) {
+        for (int i = 0; i < getRowCount(); i++) {
+            for (int j = 0; j < getColCount(); j++) {
+                if (getDataAt(i, j) == value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 
 

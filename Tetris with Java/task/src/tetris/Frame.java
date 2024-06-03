@@ -30,6 +30,13 @@ public class Frame{
         return new Frame(this.m.add(other.m, rows, cols));
     }
 
+    public void removeRow(int i) {
+        m.removeRow(i);
+    }
+
+    public void InsertRow(int i) {
+        m.InsertRow(i);
+    }
 }
 
 class EmptyFrame extends Frame{
