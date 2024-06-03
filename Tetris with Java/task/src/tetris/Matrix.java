@@ -48,11 +48,9 @@ public class Matrix {
         Matrix result = new Matrix(getRowCount(), getColCount());
         for (int i = 0; i < other.getRowCount(); i++) {
             for (int j = 0; j < other.getColCount(); j++) {
-                int newrow = i + row;
+                int newrow = (i + row + getRowCount()) % getRowCount();
                 int newcol = (j + col + getColCount()) % getColCount();
-                if(newrow < getRowCount()) {
-                    result.setDataAt(newrow, newcol, data[newrow][newcol] + other.getDataAt(i, j));
-                }
+                result.setDataAt(newrow, newcol, data[newrow][newcol] + other.getDataAt(i, j));
             }
         }
         return result;
